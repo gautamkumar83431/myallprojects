@@ -1,5 +1,5 @@
 const express = require('express');
-const multer = require('multer');
+const { upload } = require('../config/cloudinary');
 const path = require('path');
 const Payment = require('../models/Payment');
 const Project = require('../models/Project');
@@ -8,13 +8,6 @@ const { auth, adminAuth } = require('../middleware/auth');
 const { sendPaymentSubmittedEmail, sendPaymentApprovedEmail, sendPaymentRejectedEmail } = require('../utils/emailService');
 
 const router = express.Router();
-
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, 'uploads/'),
-  filename: (req, file, cb) => cb(null, Date.now() + path.extname(file.originalname))
-});
-
-const upload = multer({ storage });
 
 router.post('/manual-confirm', auth, upload.single('screenshot'), async (req, res) => {
   try {
@@ -28,7 +21,7 @@ router.post('/manual-confirm', auth, upload.single('screenshot'), async (req, re
       amount: project.price,
       stripePaymentId: transactionId,
       paymentMethod: paymentMethod,
-      screenshot: req.file ? req.file.filename : null,
+      screenshot: req.file ? req.file.path : null,
       status: 'pending'
     });
     await payment.save();

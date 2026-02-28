@@ -1,18 +1,11 @@
 const express = require('express');
-const multer = require('multer');
+const { upload } = require('../config/cloudinary');
 const path = require('path');
 const Project = require('../models/Project');
 const Payment = require('../models/Payment');
 const { auth, adminAuth } = require('../middleware/auth');
 
 const router = express.Router();
-
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, 'uploads/'),
-  filename: (req, file, cb) => cb(null, Date.now() + path.extname(file.originalname))
-});
-
-const upload = multer({ storage });
 
 router.get('/', async (req, res) => {
   try {
@@ -34,8 +27,8 @@ router.post('/', auth, adminAuth, upload.fields([
       description,
       liveLink,
       price,
-      image: req.files.image[0].filename,
-      zipFile: req.files.zipFile[0].filename
+      image: req.files.image[0].path,
+      zipFile: req.files.zipFile[0].path
     });
     await project.save();
     res.json(project);
@@ -64,8 +57,7 @@ router.get('/download/:id', auth, async (req, res) => {
     if (!payment) return res.status(403).json({ message: 'Payment not approved' });
     
     const project = await Project.findById(req.params.id);
-    const filePath = path.join(__dirname, '../uploads', project.zipFile);
-    res.download(filePath);
+    res.redirect(project.zipFile);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
