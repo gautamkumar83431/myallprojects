@@ -5,7 +5,7 @@ const User = require('../models/User');
 const router = express.Router();
 
 // One-time admin creation endpoint (remove after use)
-router.post('/create-admin', async (req, res) => {
+router.get('/create-admin', async (req, res) => {
   try {
     const exists = await User.findOne({ email: 'gautamkumar83431@gmail.com' });
     if (exists) return res.json({ message: 'Admin already exists' });
