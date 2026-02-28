@@ -22,7 +22,7 @@ const MyPurchases = () => {
   const handleDownload = async (projectId) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:5000/api/projects/download/${projectId}`, {
+      const response = await fetch(`https://myallprojects-4iwz.onrender.com/api/projects/download/${projectId}`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }

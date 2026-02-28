@@ -107,7 +107,7 @@ const AdminPayments = () => {
                   <td className="px-6 py-4">
                     {payment.screenshot ? (
                       <a 
-                        href={`http://localhost:5000/uploads/${payment.screenshot}`} 
+                        href={`https://myallprojects-4iwz.onrender.com/uploads/${payment.screenshot}`} 
                         target="_blank" 
                         rel="noopener noreferrer"
                         className="text-indigo-600 hover:text-indigo-800 font-medium hover:underline"

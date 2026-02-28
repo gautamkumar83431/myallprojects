@@ -88,7 +88,7 @@ const Home = ({ user }) => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {projects.map((project, idx) => (
               <div key={project._id} className={`bg-gradient-to-br ${gradients[idx % gradients.length]} rounded-xl overflow-hidden shadow-xl hover:shadow-2xl transform hover:-translate-y-3 hover:scale-105 transition-all duration-300 animate-fadeIn animate-float`}>
-                <img src={`http://localhost:5000/uploads/${project.image}`} alt={project.title} className="w-full h-48 object-cover" />
+                <img src={`${process.env.REACT_APP_API_URL.replace('/api', '')}/uploads/${project.image}`} alt={project.title} className="w-full h-48 object-cover" />
                 <div className="bg-white p-6">
                   <h3 className="text-2xl font-bold text-gray-800 mb-2">{project.title}</h3>
                   <p className="text-gray-600 mb-4 line-clamp-3">{project.description}</p>
