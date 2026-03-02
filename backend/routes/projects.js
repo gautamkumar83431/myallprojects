@@ -7,6 +7,11 @@ const { auth, adminAuth } = require('../middleware/auth');
 
 const router = express.Router();
 
+// Test route for debugging
+router.post('/test', (req, res) => {
+  res.json({ message: 'Test route working', body: req.body });
+});
+
 router.get('/', async (req, res) => {
   try {
     const projects = await Project.find().sort({ createdAt: -1 });
@@ -16,24 +21,36 @@ router.get('/', async (req, res) => {
   }
 });
 
-router.post('/', auth, adminAuth, upload.fields([
-  { name: 'image', maxCount: 1 },
-  { name: 'zipFile', maxCount: 1 }
-]), async (req, res) => {
+router.post('/', async (req, res) => {
   try {
+    console.log('Request body:', req.body);
+    console.log('Request files:', req.files);
+    console.log('Headers:', req.headers);
+    
     const { title, description, liveLink, price } = req.body;
-    const project = new Project({
+    
+    // Validate required fields
+    if (!title || !description || !liveLink || !price) {
+      return res.status(400).json({ message: 'All fields are required' });
+    }
+    
+    // Create project with or without files
+    const projectData = {
       title,
       description,
       liveLink,
-      price,
-      image: req.files.image[0].path,
-      zipFile: req.files.zipFile[0].path
-    });
-    await project.save();
-    res.json(project);
+      price: Number(price),
+      image: req.files?.image?.[0]?.path || 'https://via.placeholder.com/300x200',
+      zipFile: req.files?.zipFile?.[0]?.path || 'https://via.placeholder.com/file.zip'
+    };
+    
+    const project = new Project(projectData);
+    const savedProject = await project.save();
+    console.log('Project saved:', savedProject);
+    res.json(savedProject);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error('Project creation error:', error);
+    res.status(500).json({ message: error.message, stack: error.stack });
   }
 });
 

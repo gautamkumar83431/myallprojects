@@ -17,13 +17,14 @@ const AddProject = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+    
     const data = new FormData();
     data.append('title', formData.title);
     data.append('description', formData.description);
     data.append('liveLink', formData.liveLink);
     data.append('price', formData.price);
-    data.append('image', image);
-    data.append('zipFile', zipFile);
+    if (image) data.append('image', image);
+    if (zipFile) data.append('zipFile', zipFile);
 
     try {
       await api.post('/projects', data, {
@@ -32,7 +33,8 @@ const AddProject = () => {
       alert('Project added successfully');
       navigate('/');
     } catch (error) {
-      alert('Error adding project');
+      console.error('Error:', error);
+      alert('Error: ' + (error.response?.data?.message || 'Unknown error'));
     } finally {
       setLoading(false);
     }
@@ -102,7 +104,6 @@ const AddProject = () => {
                   type="file" 
                   accept="image/*" 
                   onChange={(e) => setImage(e.target.files[0])} 
-                  required 
                   className="w-full px-4 py-3 rounded-lg bg-white bg-opacity-90 border-2 border-white border-opacity-30 focus:border-white transition-all outline-none file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-indigo-600 file:text-white file:font-semibold hover:file:bg-indigo-700 file:cursor-pointer"
                 />
               </div>
@@ -116,7 +117,6 @@ const AddProject = () => {
                   type="file" 
                   accept=".zip" 
                   onChange={(e) => setZipFile(e.target.files[0])} 
-                  required 
                   className="w-full px-4 py-3 rounded-lg bg-white bg-opacity-90 border-2 border-white border-opacity-30 focus:border-white transition-all outline-none file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-indigo-600 file:text-white file:font-semibold hover:file:bg-indigo-700 file:cursor-pointer"
                 />
               </div>
